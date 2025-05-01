@@ -1,4 +1,4 @@
-# Wanderlust Travels
+# **WANDERLUST TRAVELS**
 
 ![Wanderlust Travels](https://i.ibb.co.com/67R4GbD5/Mahfuz.png)
 
