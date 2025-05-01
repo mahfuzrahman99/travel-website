@@ -20,46 +20,48 @@ export default function Header() {
   const { user, isAuthenticated, signOut } = useAuth()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  // type handleScroll = () => void
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 10)
+    const checkWidth = () => setIsMobile(window.innerWidth < 420)
+
+    handleScroll()
+    checkWidth()
+
     window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    window.addEventListener("resize", checkWidth)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("resize", checkWidth)
+    }
   }, [])
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60 ${
+      className={`sticky top-0 z-50 w-full border-b backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-200 ${
         isScrolled ? "bg-background/95 shadow-sm" : "bg-background/0"
-      } transition-all duration-200`}
+      }`}
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-          <span className="text-primary">Wanderlust</span>
-          <span>Travels</span>
+        <Link href="/" className="flex items-center gap-2 font-extrabold md:text-2xl">
+          Wanderlust Travels
         </Link>
+
         <nav className="hidden md:flex gap-6">
-          <Link href="#destinations" className="text-sm font-medium hover:text-primary transition-colors">
-            Destinations
-          </Link>
-          <Link href="#packages" className="text-sm font-medium hover:text-primary transition-colors">
-            Packages
-          </Link>
-          <Link href="#services" className="text-sm font-medium hover:text-primary transition-colors">
-            Services
-          </Link>
-          <Link href="#about" className="text-sm font-medium hover:text-primary transition-colors">
-            About
-          </Link>
-          <Link href="#blog" className="text-sm font-medium hover:text-primary transition-colors">
-            Blog
-          </Link>
-          <Link href="#contact" className="text-sm font-medium hover:text-primary transition-colors">
-            Contact
-          </Link>
+          {["Destinations", "Packages", "Services", "About", "Blog", "Contact"].map((section) => (
+            <Link
+              key={section}
+              href={`#${section.toLowerCase()}`}
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              {section}
+            </Link>
+          ))}
         </nav>
+
         <div className="flex items-center gap-4">
           <ThemeToggle />
 
@@ -102,89 +104,71 @@ export default function Header() {
               </Button>
             </Link>
           )}
-          <BookingModal>
-            <Button>Book Now</Button>
-          </BookingModal>
+
+          {!isMobile && (
+            <BookingModal>
+              <Button>Book Now</Button>
+            </BookingModal>
+          )}
+
           <Button
             variant="ghost"
             size="icon"
             className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
           >
             <span className="sr-only">Toggle menu</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-6 w-6"
-            >
-              {isMobileMenuOpen ? (
-                <>
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </>
-              ) : (
-                <>
-                  <line x1="4" x2="20" y1="12" y2="12" />
-                  <line x1="4" x2="20" y1="6" y2="6" />
-                  <line x1="4" x2="20" y1="18" y2="18" />
-                </>
-              )}
-            </svg>
+            {isMobileMenuOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-6 w-6"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-6 w-6"
+              >
+                <line x1="4" x2="20" y1="12" y2="12" />
+                <line x1="4" x2="20" y1="6" y2="6" />
+                <line x1="4" x2="20" y1="18" y2="18" />
+              </svg>
+            )}
           </Button>
         </div>
       </div>
+
       {isMobileMenuOpen && (
         <div className="md:hidden border-t py-4 px-6 bg-background shadow-md">
           <nav className="flex flex-col space-y-4">
-            <Link
-              href="#destinations"
-              className="text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Destinations
-            </Link>
-            <Link
-              href="#packages"
-              className="text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Packages
-            </Link>
-            <Link
-              href="#services"
-              className="text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Services
-            </Link>
-            <Link
-              href="#about"
-              className="text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              About
-            </Link>
-            <Link
-              href="#blog"
-              className="text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Blog
-            </Link>
-            <Link
-              href="#contact"
-              className="text-sm font-medium hover:text-primary transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Contact
-            </Link>
+            {["Destinations", "Packages", "Services", "About", "Blog", "Contact"].map((section) => (
+              <Link
+                key={section}
+                href={`#${section.toLowerCase()}`}
+                className="text-sm font-medium hover:text-primary transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {section}
+              </Link>
+            ))}
             {!isAuthenticated && (
               <Link
                 href="/auth/sign-in"
