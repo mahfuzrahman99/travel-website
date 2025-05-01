@@ -23,8 +23,8 @@ Wanderlust Travels is a modern, fully responsive travel booking website built wi
 
 ## Tech Stack
 
-- **Framework**: Next.js 14
-- **Frontend**: React 18, Tailwind CSS, shadcn/ui
+- **Framework**: Next.js 15.2.4
+- **Frontend**: React ^18.3.1, Tailwind CSS, shadcn/ui
 - **Icons**: Lucide React
 - **Date Handling**: date-fns
 - **Deployment**: Vercel
@@ -34,8 +34,8 @@ Wanderlust Travels is a modern, fully responsive travel booking website built wi
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/wanderlust-travels.git
-cd wanderlust-travels
+git clone https://github.com/mahfuzrahman99/travel-website.git
+cd 'select your path'
 npm install
 npm run dev
 ```
@@ -78,11 +78,11 @@ Visit [http://localhost:3000](http://localhost:3000) in your browser.
 ## Credits
 
 - Design inspiration: Various travel platforms
-- Images: [Unsplash](https://unsplash.com)
+- Images: [Unsplash & Imagebb](https://unsplash.com & https://imgbb.com)
 - Icons: [Lucide React](https://lucide.dev)
 - UI components: [shadcn/ui](https://ui.shadcn.com)
 - Avatar images: [Random User API](https://randomuser.me)
 
 ---
 
-**© 2023 Wanderlust Travels. All rights reserved.**
+**© 2025 Wanderlust Travels. All rights reserved.**
