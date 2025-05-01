@@ -1,7 +1,7 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect, useRef } from "react"
+import axios from "axios"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Star } from "lucide-react"
@@ -24,120 +24,25 @@ interface Testimonial {
   packages?: TestimonialPackage[]
 }
 
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    location: "New York, USA",
-    image: "https://randomuser.me/api/portraits/women/44.jpg",
-    review:
-      "The trip to Bali was absolutely amazing! Everything was well-organized, and the local guide was knowledgeable and friendly. Will definitely book with Wanderlust again!",
-    rating: 5,
-    packages: [
-      {
-        name: "Bali Explorer",
-        date: "March 2023",
-        review: "The perfect mix of adventure and relaxation. The villa accommodations were stunning!",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Michael Chen",
-    location: "Toronto, Canada",
-    image: "https://randomuser.me/api/portraits/men/32.jpg",
-    review:
-      "Our European tour exceeded all expectations. The accommodations were luxurious, and the itinerary was perfectly balanced between guided tours and free time to explore.",
-    rating: 4.5,
-    packages: [
-      {
-        name: "European Adventure",
-        date: "February 2023",
-        review: "Loved the Paris segment especially. The local food tour was a highlight!",
-      },
-      {
-        name: "Alpine Ski Getaway",
-        date: "December 2022",
-        review: "Great ski instructors and beautiful mountain views.",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Emma Rodriguez",
-    location: "London, UK",
-    image: "https://randomuser.me/api/portraits/women/68.jpg",
-    review:
-      "The Caribbean cruise package was the perfect honeymoon choice. The attention to detail and personalized service made our special trip even more memorable.",
-    rating: 5,
-    packages: [
-      {
-        name: "Caribbean Cruise",
-        date: "January 2023",
-        review: "The sunset dinner on the private beach was magical. Couldn't have asked for a better honeymoon!",
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "David Kim",
-    location: "Seoul, South Korea",
-    image: "https://randomuser.me/api/portraits/men/75.jpg",
-    review:
-      "The Japan cultural tour was incredibly informative and well-paced. I appreciated the small group size and the expertise of our guide who showed us hidden gems in Kyoto.",
-    rating: 5,
-    packages: [
-      {
-        name: "Japan Explorer",
-        date: "April 2023",
-        review: "The traditional ryokan stay and tea ceremony were authentic experiences I'll never forget.",
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "Olivia Thompson",
-    location: "Sydney, Australia",
-    image: "https://randomuser.me/api/portraits/women/33.jpg",
-    review:
-      "My safari experience in Tanzania was life-changing. Seeing the wildlife up close in their natural habitat was breathtaking, and the luxury camping accommodations were surprisingly comfortable.",
-    rating: 4.5,
-    packages: [
-      {
-        name: "African Safari",
-        date: "May 2023",
-        review: "The Serengeti sunrise hot air balloon ride was worth every penny!",
-      },
-      {
-        name: "Cape Town City Break",
-        date: "May 2023",
-        review: "Great addition to our safari trip. Loved Table Mountain and the penguin colony.",
-      },
-    ],
-  },
-  {
-    id: 6,
-    name: "James Wilson",
-    location: "Chicago, USA",
-    image: "https://randomuser.me/api/portraits/men/52.jpg",
-    review:
-      "The South America expedition was incredibly diverse, from the Inca Trail to the Amazon rainforest. The guides were passionate about conservation and taught us so much about the ecosystems.",
-    rating: 5,
-    packages: [
-      {
-        name: "Peru & Amazon Adventure",
-        date: "March 2023",
-        review: "Hiking the Inca Trail was challenging but rewarding. Our guide made the history come alive.",
-      },
-    ],
-  },
-]
-
 export default function TestimonialSlider() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
   const sliderRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const res = await axios.get("/testimonials.json")
+        setTestimonials(res.data)
+      } catch (error) {
+        console.error("Failed to fetch testimonials:", error)
+      }
+    }
+
+    fetchTestimonials()
+  }, [])
 
   useEffect(() => {
     const slider = sliderRef.current
@@ -147,27 +52,18 @@ export default function TestimonialSlider() {
 
     const startAutoScroll = () => {
       interval = setInterval(() => {
-        if (slider) {
-          slider.scrollLeft += 1
-
-          // Reset to beginning when reaching the end
-          if (slider.scrollLeft >= slider.scrollWidth - slider.clientWidth) {
-            slider.scrollLeft = 0
-          }
+        slider.scrollLeft += 1
+        if (slider.scrollLeft >= slider.scrollWidth - slider.clientWidth) {
+          slider.scrollLeft = 0
         }
       }, 20)
     }
 
     startAutoScroll()
 
-    const handleMouseEnter = () => {
-      clearInterval(interval)
-    }
-
+    const handleMouseEnter = () => clearInterval(interval)
     const handleMouseLeave = () => {
-      if (!isDragging) {
-        startAutoScroll()
-      }
+      if (!isDragging) startAutoScroll()
     }
 
     slider.addEventListener("mouseenter", handleMouseEnter)
@@ -175,10 +71,8 @@ export default function TestimonialSlider() {
 
     return () => {
       clearInterval(interval)
-      if (slider) {
-        slider.removeEventListener("mouseenter", handleMouseEnter)
-        slider.removeEventListener("mouseleave", handleMouseLeave)
-      }
+      slider.removeEventListener("mouseenter", handleMouseEnter)
+      slider.removeEventListener("mouseleave", handleMouseLeave)
     }
   }, [isDragging])
 
@@ -189,15 +83,13 @@ export default function TestimonialSlider() {
     setScrollLeft(sliderRef.current.scrollLeft)
   }
 
-  const handleMouseUp = () => {
-    setIsDragging(false)
-  }
+  const handleMouseUp = () => setIsDragging(false)
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return
     e.preventDefault()
     const x = e.pageX - sliderRef.current.offsetLeft
-    const walk = (x - startX) * 2 // Scroll speed multiplier
+    const walk = (x - startX) * 2
     sliderRef.current.scrollLeft = scrollLeft - walk
   }
 
@@ -217,7 +109,7 @@ export default function TestimonialSlider() {
             key={testimonial.id}
             testimonial={{
               ...testimonial,
-              packages: testimonial.packages || [], // Ensure packages is never undefined
+              packages: testimonial.packages || [],
             }}
           >
             <Card className="p-6 min-w-[320px] hover:shadow-md transition-shadow cursor-pointer">
